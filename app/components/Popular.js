@@ -1,4 +1,30 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+function LanguagesNav({ updateLanguage, selectedLanguage }) {
+  const languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python'];
+  return (
+    <ul className="flex-center">
+      {languages.map(language => (
+        <li key={language}>
+          <button
+            type="button"
+            onClick={() => updateLanguage(language)}
+            className="btn-clear nav-link"
+            style={language === selectedLanguage ? { color: 'red' } : null}
+          >
+            {language}
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+LanguagesNav.propTypes = {
+  selectedLanguage: PropTypes.string.isRequired,
+  updateLanguage: PropTypes.func.isRequired,
+};
 
 export default class Popular extends Component {
   constructor(props) {
@@ -6,33 +32,22 @@ export default class Popular extends Component {
     this.state = {
       selectedLanguage: 'All',
     };
+    this.updateLanguage = this.updateLanguage.bind(this);
   }
 
-  updateLanguage(l) {
-    this.setState({ selectedLanguage: l });
+  updateLanguage(lang) {
+    this.setState({ selectedLanguage: lang });
   }
 
   render() {
-    const languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python'];
+    const { selectedLanguage } = this.state;
     return (
-      <ul className="flex-center">
-        {languages.map(language => (
-          <li key={language}>
-            <button
-              type="button"
-              onClick={() => this.updateLanguage(language)}
-              className="btn-clear nav-link"
-              style={
-                language === this.state.selectedLanguage
-                  ? { color: 'red' }
-                  : null
-              }
-            >
-              {language}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <React.Fragment>
+        <LanguagesNav
+          updateLanguage={this.updateLanguage}
+          selectedLanguage={selectedLanguage}
+        />
+      </React.Fragment>
     );
   }
 }
