@@ -3,20 +3,19 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import './index.css';
 import Popular from './components/Popular';
+import Battle from './components/Battle';
 
 class App extends React.Component {
   render() {
-    const { name } = this.props;
     return (
       <div>
+        <Battle />
         <Popular />
       </div>
     );
   }
 }
 
-App.propTypes = {
-  name: PropTypes.string.isRequired,
-};
+App.propTypes = {};
 
-ReactDOM.render(<App name="nico" />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
