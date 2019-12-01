@@ -32,7 +32,7 @@ export default class Popular extends Component {
     super(props);
     this.state = {
       selectedLanguage: 'All',
-      repos: null,
+      repos: {},
       error: null,
     };
     this.updateLanguage = this.updateLanguage.bind(this);
@@ -48,27 +48,32 @@ export default class Popular extends Component {
     this.setState({
       selectedLanguage,
       error: null,
-      repos: null,
     });
-
-    fetchPopularRepos(selectedLanguage)
-      .then(repos =>
-        this.setState({
-          repos,
-          error: null,
+    // if data for selected repo doesn't exist then we
+    // fetch data for thatrepo ans add it to
+    // repos-object to be cache into state
+    if (!this.state.repos[selectedLanguage]) {
+      // get data
+      fetchPopularRepos(selectedLanguage)
+        .then(data => {
+          // get previous state
+          this.setState(({ repos }) => ({
+            // add new data for the repo into the repos-state-object
+            repos: { ...repos, [selectedLanguage]: data },
+          }));
         })
-      )
-      .catch(() => {
-        console.warn('Error fetching repos: ', error);
-
-        this.setState({
-          error: `There was an error fetching the repositories.`,
+        .catch(error => {
+          console.warn('Error fetching repos: ', error);
+          this.setState({
+            error: `There was an error fetching the repositories.`,
+          });
         });
-      });
+    }
   }
 
   isLoading() {
-    return this.state.repos === null && this.state.error === null;
+    const { selectedLanguage, repos, error } = this.state;
+    return !repos[selectedLanguage] && error === null;
   }
 
   render() {
@@ -81,7 +86,9 @@ export default class Popular extends Component {
         />
         {this.isLoading() && <p>LOADING</p>}
         {error && <p>{error}</p>}
-        {repos && <pre>{JSON.stringify(repos, null, 2)}</pre>}
+        {repos[selectedLanguage] && (
+          <pre>{JSON.stringify(repos[selectedLanguage], null, 2)}</pre>
+        )}
       </React.Fragment>
     );
   }
